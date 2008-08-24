@@ -127,13 +127,13 @@ class CorpIndustryJobs(Proxy):
 		Proxy.get(self)
 
 class CharWalletJournal(Proxy):
-	useParameters = ['userID','apiKey','characterID','beforeRefID']
+	useParameters = ['userID','apiKey','characterID','accountKey','beforeRefID']
 	cacheTime = datetime.timedelta(minutes=60)
 	def get(self):
 		Proxy.get(self)
 
 class CorpWalletJournal(Proxy):
-	useParameters = ['userID','apiKey','characterID','beforeRefID']
+	useParameters = ['userID','apiKey','characterID','accountKey','beforeRefID']
 	cacheTime = datetime.timedelta(minutes=60)
 	def get(self):
 		Proxy.get(self)
@@ -151,13 +151,13 @@ class CorpKillLog(Proxy):
 		Proxy.get(self)
 
 class CharWalletTransactions(Proxy):
-	useParameters = ['userID','apiKey','characterID','beforeRefID']
+	useParameters = ['userID','apiKey','characterID','beforeTransID']
 	cacheTime = datetime.timedelta(minutes=60)
 	def get(self):
 		Proxy.get(self)
 
 class CorpWalletTransactions(Proxy):
-	useParameters = ['userID','apiKey','characterID','beforeRefID']
+	useParameters = ['userID','apiKey','characterID','beforeTransID']
 	cacheTime = datetime.timedelta(minutes=60)
 	def get(self):
 		Proxy.get(self)
@@ -235,7 +235,7 @@ class CorpStarbaseList(Proxy):
 		Proxy.get(self)
 
 class CorpStarbaseDetail(Proxy):
-	useParameters = ['userID','apiKey','characterID','version','itemID']
+	useParameters = ['userID','apiKey','characterID','itemID','version']
 	cacheTime = datetime.timedelta(hours=6)
 	def get(self):
 		Proxy.get(self)
