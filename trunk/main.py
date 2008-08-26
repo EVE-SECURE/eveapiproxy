@@ -151,13 +151,13 @@ class CorpKillLog(Proxy):
 		Proxy.get(self)
 
 class CharWalletTransactions(Proxy):
-	useParameters = ['userID','apiKey','characterID','beforeTransID']
+	useParameters = ['userID','apiKey','characterID']
 	cacheTime = datetime.timedelta(minutes=60)
 	def get(self):
 		Proxy.get(self)
 
 class CorpWalletTransactions(Proxy):
-	useParameters = ['userID','apiKey','characterID','beforeTransID']
+	useParameters = ['userID','apiKey','characterID']
 	cacheTime = datetime.timedelta(minutes=60)
 	def get(self):
 		Proxy.get(self)
