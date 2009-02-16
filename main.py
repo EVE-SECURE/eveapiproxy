@@ -6,6 +6,7 @@ import re
 import hashlib
 import datetime
 import wsgiref.handlers
+import urllib
 from google.appengine.ext import webapp
 from google.appengine.ext import db
 from google.appengine.api import urlfetch
@@ -25,10 +26,11 @@ class Proxy(webapp.RequestHandler):
 		self.response.headers['Content-Type'] = 'application/xml;charset=UTF-8'	# Set the output MIME type to XML
 		k=''												# Start building the hash
 		requestParameters = '?'								# Start building the query string.  We will strip off any irrelevant parameters.
-		p = re.compile('/[^A-Za-z0-9-]/')					# Regular expression used to clean up the parameters
+		p = re.compile('/[^%A-Za-z0-9-]/')					# Regular expression used to clean up the parameters
 		for parameter in self.useParameters:				# Loop through the parameters
 			k+=p.sub('',self.request.get(parameter))		# Strip out messy characters in the parameters
-			requestParameters += parameter + '=' + self.request.get(parameter) + '&'	# Build up the query string
+			requestParameters += urllib.urlencode({parameter:self.request.get(parameter)}) + '&'
+			#requestParameters += parameter + '=' + self.request.get(parameter) + '&'	# Build up the query string
 		requestParameters = requestParameters[:len(requestParameters)-1]				# Strip off the extra &
 		h = hashlib.md5(k).hexdigest()						# Create an MD5 hash
 		epoch = datetime.datetime.now()						# Get the time
