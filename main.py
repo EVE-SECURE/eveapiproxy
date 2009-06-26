@@ -82,7 +82,7 @@ class CharAssetList(Proxy):
 
 class CorpAssetList(Proxy):
 	useParameters = ['userID','apiKey','characterID','version']
-	cacheTime = datetime.timedelta(hours=24)
+	cacheTime = datetime.timedelta(hours=23)
 	def get(self):
 		Proxy.get(self)
 
@@ -266,6 +266,84 @@ class MapFacWarSystems(Proxy):
 	def get(self):
 		Proxy.get(self)
 
+class CharMedals(Proxy):
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(hours=23)
+	def get(self):
+		Proxy.get(self)
+
+class CorpMedals(Proxy):
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(hours=23)
+	def get(self):
+		Proxy.get(self)
+
+class CharSkillQueue(Proxy):
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(minutes=15)
+	def get(self):
+		Proxy.get(self)
+
+class CharStandings(Proxy):
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(hours=3)
+	def get(self):
+		Proxy.get(self)
+
+class CorpStandings(Proxy):
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(hours=3)
+	def get(self):
+		Proxy.get(self)
+
+class CorpContainerLog(Proxy):
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(hours=3)
+	def get(self):
+		Proxy.get(self)
+
+class CorpMemberMedals(Proxy):
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(hours=23)
+	def get(self):
+		Proxy.get(self)
+
+class CorpMemberSecurity(Proxy):
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class CorpMemberSecurityLog(Proxy):
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class CorpShareholders(Proxy):
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class CorpTitles(Proxy):
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class EveCertificateTree(Proxy):
+	useParameters = []
+	cacheTime = datetime.timedelta(hours=23)
+	def get(self):
+		Proxy.get(self)
+
+class ServerServerStatus(Proxy):
+	useParameters = []
+	cacheTime = datetime.timedelta(minutes=3)
+	def get(self):
+		Proxy.get(self)
+
 # Google App Engine Infrastructure
 
 def main():
@@ -303,7 +381,20 @@ def main():
 										('/char/FacWarStats.xml.aspx',CharFacWarStats),																				
 										('/corp/FacWarStats.xml.aspx',CorpFacWarStats),																														
 										('/eve/FacWarTopStats.xml.aspx',EveFacWarTopStats),
-										('/map/FacWarSystems.xml.aspx',MapFacWarSystems)],
+										('/map/FacWarSystems.xml.aspx',MapFacWarSystems),
+										('/char/Medals.xml.aspx',CharMedals),
+										('/corp/Medals.xml.aspx',CorpMedals),
+										('/char/SkillQueue.xml.aspx',CharSkillQueue),
+										('/char/Standings.xml.aspx',CharStandings),
+										('/corp/Standings.xml.aspx',CorpStandings),
+										('/corp/ContainerLog.xml.aspx',CorpContainerLog),
+										('/corp/MemberMedals.xml.aspx',CorpMemberMedals),
+										('/corp/MemberSecurity.xml.aspx',CorpMemberSecurity),
+										('/corp/MemberSecurityLog.xml.aspx',CorpMemberSecurityLog),
+										('/corp/Shareholders.xml.aspx',CorpShareholders),
+										('/corp/Titles.xml.aspx',CorpTitles),
+										('/eve/CertificateTree.xml.aspx',EveCertificateTree),
+										('/server/ServerStatus.xml.aspx',ServerServerStatus)],
                                        debug=True)
   wsgiref.handlers.CGIHandler().run(application)
 
