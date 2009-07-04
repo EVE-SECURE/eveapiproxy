@@ -238,7 +238,7 @@ class CorpStarbaseList(Proxy):
 
 class CorpStarbaseDetail(Proxy):
 	useParameters = ['userID','apiKey','characterID','itemID','version']
-	cacheTime = datetime.timedelta(hours=6)
+	cacheTime = datetime.timedelta(hours=1)
 	def get(self):
 		Proxy.get(self)
 
