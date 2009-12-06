@@ -53,6 +53,10 @@ class Proxy(webapp.RequestHandler):
 		apiCallResult.put()									# Do a GQL put
 		self.response.out.write(value.content)				# Write out the results
 		return												# Finished
+		
+# Added per dafire's comment
+		def post(self):
+			self.get()
 
 # These are the classes that define each API call's required parameters and cache times.
 
