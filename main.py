@@ -55,8 +55,8 @@ class Proxy(webapp.RequestHandler):
 		return												# Finished
 		
 # Added per dafire's comment
-		def post(self):
-			self.get()
+	def post(self):
+		self.get()
 
 # These are the classes that define each API call's required parameters and cache times.
 
