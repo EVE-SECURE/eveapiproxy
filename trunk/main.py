@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Based on Erik Everson's excellent eveapiproxy application, updated for Dominion.
+# Based on http://wiki.eve-id.net/APIv2_Page_Index (as of 151936JAN10).
 import time
 import random
 import re
@@ -38,9 +40,9 @@ class Proxy(webapp.RequestHandler):
 		q.filter('h =',h)									# ...
 		q.filter('apiCall =',self.request.path)				# ...
 		q.order('-epoch')									# ...
-		results = q.fetch(1000)									# Execute the GQL query
+		results = q.fetch(1000)								# Execute the GQL query
 		for result in results:								# Loop through the results
-			if result.epoch + self.cacheTime > epoch:		# If the cache time has not expired...
+			if result.epoch + self.cacheTime + time(minute=1) > epoch:   # If the cache time has not expired...
 				self.response.out.write(result.value)		# ...send the cached response to the user and don't bother CCP
 				return										# ...and finish
 			else:											# Otherwise...
@@ -59,22 +61,18 @@ class Proxy(webapp.RequestHandler):
 		self.get()
 
 # These are the classes that define each API call's required parameters and cache times.
+# Arranged in the order indicated on the website above (for easy checks in the future).
+# All time intervals have been verified as of same date listed above
+
+class AccountCharacters(Proxy):
+	useParameters = ['userID','apiKey']
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
 
 class CharAccountBalance(Proxy):
 	useParameters = ['userID', 'apiKey','characterID']
 	cacheTime = datetime.timedelta(minutes=15)
-	def get(self):
-		Proxy.get(self)
-		
-class CorpAccountBalance(Proxy):
-	useParameters = ['userID', 'apiKey','characterID']
-	cacheTime = datetime.timedelta(minutes=15)
-	def get(self):
-		Proxy.get(self)
-
-class EveAllianceList(Proxy):
-	useParameters = []
-	cacheTime = datetime.timedelta(minutes=60)
 	def get(self):
 		Proxy.get(self)
 
@@ -84,189 +82,45 @@ class CharAssetList(Proxy):
 	def get(self):
 		Proxy.get(self)
 
-class CorpAssetList(Proxy):
-	useParameters = ['userID','apiKey','characterID','version']
-	cacheTime = datetime.timedelta(hours=23)
-	def get(self):
-		Proxy.get(self)
-
-class AccountCharacters(Proxy):
-	useParameters = ['userID','apiKey']
-	cacheTime = datetime.timedelta(minutes=60)
-	def get(self):
-		Proxy.get(self)
-
 class CharCharacterSheet(Proxy):
 	useParameters = ['userID','apiKey','characterID']
-	cacheTime = datetime.timedelta(minutes=60)
-	def get(self):
-		Proxy.get(self)
-				
-class EveConquerableStationList(Proxy):
-	useParameters = []
-	cacheTime = datetime.timedelta(minutes=60)
-	def get(self):
-		Proxy.get(self)
-			
-class CorpCorporationSheet(Proxy):
-	useParameters = ['userID','apiKey','characterID']
-	cacheTime = datetime.timedelta(hours=6)
+	cacheTime = datetime.timedelta(hours=1)
 	def get(self):
 		Proxy.get(self)
 
-class EveErrorList(Proxy):
-	useParameters = []
-	cacheTime = datetime.timedelta(minutes=60)
+class CharFacWarStats(Proxy): # Unable to verify time delta
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(hours=1)
 	def get(self):
 		Proxy.get(self)
-				
+
 class CharIndustryJobs(Proxy):
 	useParameters = ['userID','apiKey','characterID']
 	cacheTime = datetime.timedelta(minutes=15)
 	def get(self):
 		Proxy.get(self)
 
-class CorpIndustryJobs(Proxy):
-	useParameters = ['userID','apiKey','characterID']
-	cacheTime = datetime.timedelta(minutes=15)
-	def get(self):
-		Proxy.get(self)
-
-class CharWalletJournal(Proxy):
-	useParameters = ['userID','apiKey','characterID','accountKey','beforeRefID']
-	cacheTime = datetime.timedelta(minutes=60)
-	def get(self):
-		Proxy.get(self)
-
-class CorpWalletJournal(Proxy):
-	useParameters = ['userID','apiKey','characterID','accountKey','beforeRefID']
-	cacheTime = datetime.timedelta(minutes=60)
-	def get(self):
-		Proxy.get(self)
-
 class CharKillLog(Proxy):
 	useParameters = ['userID','apiKey','characterID','beforeKillID']
-	cacheTime = datetime.timedelta(minutes=60)
+	cacheTime = datetime.timedelta(hours=1)
 	def get(self):
 		Proxy.get(self)
 
-class CorpKillLog(Proxy):
-	useParameters = ['userID','apiKey','characterID','beforeKillID']
-	cacheTime = datetime.timedelta(minutes=60)
-	def get(self):
-		Proxy.get(self)
-
-class CharWalletTransactions(Proxy):
+class CharMailingLists(Proxy):
 	useParameters = ['userID','apiKey','characterID']
-	cacheTime = datetime.timedelta(minutes=60)
+	cacheTime = datetime.timedelta(hours=6)
 	def get(self):
 		Proxy.get(self)
 
-class CorpWalletTransactions(Proxy):
+class CharMailMessages(Proxy):
 	useParameters = ['userID','apiKey','characterID']
-	cacheTime = datetime.timedelta(minutes=60)
+	cacheTime = datetime.timedelta(minutes=30)
 	def get(self):
 		Proxy.get(self)
 
 class CharMarketOrders(Proxy):
 	useParameters = ['userID','apiKey','characterID']
-	cacheTime = datetime.timedelta(minutes=60)
-	def get(self):
-		Proxy.get(self)
-
-class CorpMarketOrders(Proxy):
-	useParameters = ['userID','apiKey','characterID']
-	cacheTime = datetime.timedelta(minutes=60)
-	def get(self):
-		Proxy.get(self)
-
-class MapJumps(Proxy):
-	useParameters = []
-	cacheTime = datetime.timedelta(minutes=60)
-	def get(self):
-		Proxy.get(self)
-
-class MapKills(Proxy):
-	useParameters = []
-	cacheTime = datetime.timedelta(minutes=60)
-	def get(self):
-		Proxy.get(self)
-
-class MapSovereignty(Proxy):
-	useParameters = []
-	cacheTime = datetime.timedelta(hours=6)
-	def get(self):
-		Proxy.get(self)
-
-class CorpMemberTracking(Proxy):
-	useParameters = ['userID','apiKey','characterID']
-	cacheTime = datetime.timedelta(hours=6)
-	def get(self):
-		Proxy.get(self)
-
-class EveCharacterID(Proxy):
-	useParameters = ['names']
-	cacheTime = datetime.timedelta(hours=24)
-	def get(self):
-		Proxy.get(self)
-
-class EveCharacterName(Proxy):
-	useParameters = ['ids']
-	cacheTime = datetime.timedelta(hours=24)
-	def get(self):
-		Proxy.get(self)
-
-class EveRefTypes(Proxy):
-	useParameters = []
-	cacheTime = datetime.timedelta(hours=24)
-	def get(self):
-		Proxy.get(self)
-
-class CharSkillInTraining(Proxy):
-	useParameters = ['userID','apiKey','characterID']
-	cacheTime = datetime.timedelta(minutes=15)
-	def get(self):
-		Proxy.get(self)
-
-class EveSkillTree(Proxy):
-	useParameters = []
-	cacheTime = datetime.timedelta(hours=24)
-	def get(self):
-		Proxy.get(self)
-
-class CorpStarbaseList(Proxy):
-	useParameters = ['userID','apiKey','characterID','version']
-	cacheTime = datetime.timedelta(hours=6)
-	def get(self):
-		Proxy.get(self)
-
-class CorpStarbaseDetail(Proxy):
-	useParameters = ['userID','apiKey','characterID','itemID','version']
 	cacheTime = datetime.timedelta(hours=1)
-	def get(self):
-		Proxy.get(self)
-
-class CharFacWarStats(Proxy):
-	useParameters = ['userID','apiKey','characterID']
-	cacheTime = datetime.timedelta(minutes=60)
-	def get(self):
-		Proxy.get(self)
-
-class CorpFacWarStats(Proxy):
-	useParameters = ['userID','apiKey','characterID']
-	cacheTime = datetime.timedelta(minutes=60)
-	def get(self):
-		Proxy.get(self)
-
-class EveFacWarTopStats(Proxy):
-	useParameters = []
-	cacheTime = datetime.timedelta(minutes=60)
-	def get(self):
-		Proxy.get(self)
-
-class MapFacWarSystems(Proxy):
-	useParameters = []
-	cacheTime = datetime.timedelta(minutes=60)
 	def get(self):
 		Proxy.get(self)
 
@@ -276,9 +130,15 @@ class CharMedals(Proxy):
 	def get(self):
 		Proxy.get(self)
 
-class CorpMedals(Proxy):
+class CharNotifications(Proxy):
 	useParameters = ['userID','apiKey','characterID']
-	cacheTime = datetime.timedelta(hours=23)
+	cacheTime = datetime.timedelta(minutes=30)
+	def get(self):
+		Proxy.get(self)
+
+class CharSkillInTraining(Proxy): # 15 minutes or 1 hour
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(minutes=15)
 	def get(self):
 		Proxy.get(self)
 
@@ -294,15 +154,69 @@ class CharStandings(Proxy):
 	def get(self):
 		Proxy.get(self)
 
-class CorpStandings(Proxy):
+class CharWalletJournal(Proxy):
+	useParameters = ['userID','apiKey','characterID','accountKey','beforeRefID']
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class CharWalletTransactions(Proxy):
+	useParameters = ['userID','apiKey','characterID','beforeTransID']
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class CorpAccountBalance(Proxy):
+	useParameters = ['userID', 'apiKey','characterID']
+	cacheTime = datetime.timedelta(minutes=15)
+	def get(self):
+		Proxy.get(self)
+
+class CorpAssetList(Proxy): # Unable to verify time delta
+	useParameters = ['userID','apiKey','characterID','version']
+	cacheTime = datetime.timedelta(hours=23)
+	def get(self):
+		Proxy.get(self)
+
+class CorpContainerLog(Proxy): # Unable to verify time delta
 	useParameters = ['userID','apiKey','characterID']
 	cacheTime = datetime.timedelta(hours=3)
 	def get(self):
 		Proxy.get(self)
 
-class CorpContainerLog(Proxy):
+class CorpCorporationSheet(Proxy):
 	useParameters = ['userID','apiKey','characterID']
-	cacheTime = datetime.timedelta(hours=3)
+	cacheTime = datetime.timedelta(hours=6)
+	def get(self):
+		Proxy.get(self)
+
+class CorpFacWarStats(Proxy): # Unable to verify time delta
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class CorpIndustryJobs(Proxy):
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(minutes=15)
+	def get(self):
+		Proxy.get(self)
+
+class CorpKillLog(Proxy):
+	useParameters = ['userID','apiKey','characterID','beforeKillID']
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class CorpMarketOrders(Proxy):
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class CorpMedals(Proxy):
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(hours=23)
 	def get(self):
 		Proxy.get(self)
 
@@ -312,26 +226,68 @@ class CorpMemberMedals(Proxy):
 	def get(self):
 		Proxy.get(self)
 
-class CorpMemberSecurity(Proxy):
+class CorpMemberSecurity(Proxy): # Unable to verify time delta
 	useParameters = ['userID','apiKey','characterID']
 	cacheTime = datetime.timedelta(hours=1)
 	def get(self):
 		Proxy.get(self)
 
-class CorpMemberSecurityLog(Proxy):
+class CorpMemberSecurityLog(Proxy): # Unable to verify time delta
 	useParameters = ['userID','apiKey','characterID']
 	cacheTime = datetime.timedelta(hours=1)
 	def get(self):
 		Proxy.get(self)
 
-class CorpShareholders(Proxy):
+class CorpMemberTracking(Proxy):
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(hours=6)
+	def get(self):
+		Proxy.get(self)
+
+class CorpStarbaseDetail(Proxy): # Unable to verify time delta
+	useParameters = ['userID','apiKey','characterID','itemID','version']
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class CorpStarbaseList(Proxy): # Unable to verify time delta
+	useParameters = ['userID','apiKey','characterID','version']
+	cacheTime = datetime.timedelta(hours=6)
+	def get(self):
+		Proxy.get(self)
+
+class CorpShareholders(Proxy): # Unable to verify time delta
 	useParameters = ['userID','apiKey','characterID']
 	cacheTime = datetime.timedelta(hours=1)
 	def get(self):
 		Proxy.get(self)
 
-class CorpTitles(Proxy):
+class CorpStandings(Proxy):
 	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(hours=3)
+	def get(self):
+		Proxy.get(self)
+
+class CorpTitles(Proxy): # Unable to verify time delta
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class CorpWalletJournal(Proxy): # 15 minutes or 1 hour?
+	useParameters = ['userID','apiKey','characterID','accountKey','beforeRefID']
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class CorpWalletTransactions(Proxy): # 15 minutes or 1 hour?
+	useParameters = ['userID','apiKey','characterID','accountKey','beforeTransID']
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class EveAllianceList(Proxy):
+	useParameters = []
 	cacheTime = datetime.timedelta(hours=1)
 	def get(self):
 		Proxy.get(self)
@@ -339,6 +295,78 @@ class CorpTitles(Proxy):
 class EveCertificateTree(Proxy):
 	useParameters = []
 	cacheTime = datetime.timedelta(hours=23)
+	def get(self):
+		Proxy.get(self)
+
+class EveConquerableStationList(Proxy):
+	useParameters = []
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class EveErrorList(Proxy):
+	useParameters = []
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class EveFacWarStats(Proxy):
+	useParameters = []
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class EveFacWarTopStats(Proxy):
+	useParameters = []
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class EveCharacterID(Proxy): # 1 month?
+	useParameters = ['names']
+	cacheTime = datetime.timedelta(hours=24)
+	def get(self):
+		Proxy.get(self)
+
+class EveCharacterName(Proxy): # 1 month?
+	useParameters = ['ids']
+	cacheTime = datetime.timedelta(hours=24)
+	def get(self):
+		Proxy.get(self)
+
+class EveRefTypes(Proxy):
+	useParameters = []
+	cacheTime = datetime.timedelta(hours=24)
+	def get(self):
+		Proxy.get(self)
+
+class EveSkillTree(Proxy): # 10 years?
+	useParameters = []
+	cacheTime = datetime.timedelta(hours=24)
+	def get(self):
+		Proxy.get(self)
+
+class MapFacWarSystems(Proxy):
+	useParameters = []
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class MapJumps(Proxy):
+	useParameters = []
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class MapKills(Proxy):
+	useParameters = []
+	cacheTime = datetime.timedelta(hours=1)
+	def get(self):
+		Proxy.get(self)
+
+class MapSovereignty(Proxy):
+	useParameters = []
+	cacheTime = datetime.timedelta(hours=1)
 	def get(self):
 		Proxy.get(self)
 
@@ -351,53 +379,57 @@ class ServerServerStatus(Proxy):
 # Google App Engine Infrastructure
 
 def main():
-  application = webapp.WSGIApplication([('/char/AccountBalance.xml.aspx',CharAccountBalance),
-										('/corp/AccountBalance.xml.aspx',CorpAccountBalance),										
-										('/eve/AllianceList.xml.aspx',EveAllianceList),						
-										('/char/AssetList.xml.aspx',CharAssetList),									
-										('/corp/AssetList.xml.aspx',CorpAssetList),
-										('/account/Characters.xml.aspx',AccountCharacters),										
+	application = webapp.WSGIApplication([('/account/Characters.xml.aspx',AccountCharacters),
+										('/char/AccountBalance.xml.aspx',CharAccountBalance),
+										('/char/AssetList.xml.aspx',CharAssetList),
 										('/char/CharacterSheet.xml.aspx',CharCharacterSheet),
-										('/eve/ConquerableStationList.xml.aspx',EveConquerableStationList),
-										('/corp/CorporationSheet.xml.aspx',CorpCorporationSheet),										
-										('/eve/ErrorList.xml.aspx',EveErrorList),																				
-										('/char/IndustryJobs.xml.aspx',CharIndustryJobs),																	
-										('/corp/IndustryJobs.xml.aspx',CorpIndustryJobs),																											
-										('/char/WalletJournal.xml.aspx',CharWalletJournal),																																					
-										('/corp/WalletJournal.xml.aspx',CorpWalletJournal),																																					
+										('/char/FacWarStats.xml.aspx',CharFacWarStats),
+										('/char/IndustryJobs.xml.aspx',CharIndustryJobs),
 										('/char/KillLog.xml.aspx',CharKillLog),
-										('/corp/KillLog.xml.aspx',CorpKillLog),
-										('/char/WalletTransactions.xml.aspx',CharWalletTransactions),
-										('/corp/WalletTransactions.xml.aspx',CorpWalletTransactions),
+										('/char/mailinglists.xml.aspx',CharMailingLists),
+										('/char/MailMessages.xml.aspx',CharMailMessages),
 										('/char/MarketOrders.xml.aspx',CharMarketOrders),
-										('/corp/MarketOrders.xml.aspx',CorpMarketOrders),
-										('/map/Jumps.xml.aspx',MapJumps),								
-										('/map/Kills.xml.aspx',MapKills),
-										('/map/Sovereignty.xml.aspx',MapSovereignty),
-										('/corp/MemberTracking.xml.aspx',CorpMemberTracking),
-										('/eve/CharacterID.xml.aspx',EveCharacterID),																																								
-										('/eve/CharacterName.xml.aspx',EveCharacterName),
-										('/eve/RefTypes.xml.aspx',EveRefTypes),
-										('/char/SkillInTraining.xml.aspx',CharSkillInTraining),										
-										('/eve/SkillTree.xml.aspx',EveSkillTree),
-										('/corp/StarbaseList.xml.aspx',CorpStarbaseList),	
-										('/corp/StarbaseDetail.xml.aspx',CorpStarbaseDetail),
-										('/char/FacWarStats.xml.aspx',CharFacWarStats),																				
-										('/corp/FacWarStats.xml.aspx',CorpFacWarStats),																														
-										('/eve/FacWarTopStats.xml.aspx',EveFacWarTopStats),
-										('/map/FacWarSystems.xml.aspx',MapFacWarSystems),
 										('/char/Medals.xml.aspx',CharMedals),
-										('/corp/Medals.xml.aspx',CorpMedals),
+										('/char/Notifications.xml.aspx',CharNotifications),
+										('/char/SkillInTraining.xml.aspx',CharSkillInTraining),
 										('/char/SkillQueue.xml.aspx',CharSkillQueue),
 										('/char/Standings.xml.aspx',CharStandings),
-										('/corp/Standings.xml.aspx',CorpStandings),
+										('/char/WalletJournal.xml.aspx',CharWalletJournal),
+										('/char/WalletTransactions.xml.aspx',CharWalletTransactions),
+										('/corp/AccountBalance.xml.aspx',CorpAccountBalance),
+										('/corp/AssetList.xml.aspx',CorpAssetList),
 										('/corp/ContainerLog.xml.aspx',CorpContainerLog),
+										('/corp/CorporationSheet.xml.aspx',CorpCorporationSheet),
+										('/corp/FacWarStats.xml.aspx',CorpFacWarStats),
+										('/corp/IndustryJobs.xml.aspx',CorpIndustryJobs),
+										('/corp/KillLog.xml.aspx',CorpKillLog),
+										('/corp/MarketOrders.xml.aspx',CorpMarketOrders),
+										('/corp/Medals.xml.aspx',CorpMedals),
 										('/corp/MemberMedals.xml.aspx',CorpMemberMedals),
 										('/corp/MemberSecurity.xml.aspx',CorpMemberSecurity),
 										('/corp/MemberSecurityLog.xml.aspx',CorpMemberSecurityLog),
+										('/corp/MemberTracking.xml.aspx',CorpMemberTracking),
+										('/corp/StarbaseDetail.xml.aspx',CorpStarbaseDetail),
+										('/corp/StarbaseList.xml.aspx',CorpStarbaseList),
 										('/corp/Shareholders.xml.aspx',CorpShareholders),
+										('/corp/Standings.xml.aspx',CorpStandings),
 										('/corp/Titles.xml.aspx',CorpTitles),
+										('/corp/WalletJournal.xml.aspx',CorpWalletJournal),
+										('/corp/WalletTransactions.xml.aspx',CorpWalletTransactions),
+										('/eve/AllianceList.xml.aspx',EveAllianceList),
 										('/eve/CertificateTree.xml.aspx',EveCertificateTree),
+										('/eve/ConquerableStationList.xml.aspx',EveConquerableStationList),
+										('/eve/ErrorList.xml.aspx',EveErrorList),
+										('/eve/FacWarStats.xml.aspx',EveFacWarStats),
+										('/eve/FacWarTopStats.xml.aspx',EveFacWarTopStats),
+										('/eve/CharacterID.xml.aspx',EveCharacterID),
+										('/eve/CharacterName.xml.aspx',EveCharacterName),
+										('/eve/RefTypes.xml.aspx',EveRefTypes),
+										('/eve/SkillTree.xml.aspx',EveSkillTree),
+										('/map/FacWarSystems.xml.aspx',MapFacWarSystems),
+										('/map/Jumps.xml.aspx',MapJumps),
+										('/map/Kills.xml.aspx',MapKills),
+										('/map/Sovereignty.xml.aspx',MapSovereignty),
 										('/server/ServerStatus.xml.aspx',ServerServerStatus)],
                                        debug=True)
   wsgiref.handlers.CGIHandler().run(application)
