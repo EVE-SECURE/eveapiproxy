@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
-# Based on Erik Everson's excellent eveapiproxy application, updated for Dominion.
+# Based on Erik Evenson's excellent eveapiproxy application, updated for Dominion.
 # Based on http://wiki.eve-id.net/APIv2_Page_Index (as of 151936JAN10).
+# Contributors: Erik Evenson, dafire, zakuluka
+
 import time
 import random
 import re
