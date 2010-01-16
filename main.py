@@ -42,7 +42,7 @@ class Proxy(webapp.RequestHandler):
 		q.order('-epoch')									# ...
 		results = q.fetch(1000)								# Execute the GQL query
 		for result in results:								# Loop through the results
-			if result.epoch + self.cacheTime + time(minute=1) > epoch:   # If the cache time has not expired...
+			if result.epoch + self.cacheTime > epoch:   # If the cache time has not expired...
 				self.response.out.write(result.value)		# ...send the cached response to the user and don't bother CCP
 				return										# ...and finish
 			else:											# Otherwise...
@@ -432,7 +432,7 @@ def main():
 										('/map/Sovereignty.xml.aspx',MapSovereignty),
 										('/server/ServerStatus.xml.aspx',ServerServerStatus)],
                                        debug=True)
-  wsgiref.handlers.CGIHandler().run(application)
+	wsgiref.handlers.CGIHandler().run(application)
 
 if __name__ == '__main__':
   main()
