@@ -138,6 +138,12 @@ class CharNotifications(Proxy):
 	def get(self):
 		Proxy.get(self)
 
+class CharResearch(Proxy):
+	useParameters = ['userID','apiKey','characterID']
+	cacheTime = datetime.timedelta(minutes=15)
+	def get(self):
+		Proxy.get(self)
+
 class CharSkillInTraining(Proxy): # 15 minutes or 1 hour
 	useParameters = ['userID','apiKey','characterID']
 	cacheTime = datetime.timedelta(minutes=15)
@@ -393,6 +399,7 @@ def main():
 										('/char/MarketOrders.xml.aspx',CharMarketOrders),
 										('/char/Medals.xml.aspx',CharMedals),
 										('/char/Notifications.xml.aspx',CharNotifications),
+										('/char/Research.xml.aspx',CharResearch),
 										('/char/SkillInTraining.xml.aspx',CharSkillInTraining),
 										('/char/SkillQueue.xml.aspx',CharSkillQueue),
 										('/char/Standings.xml.aspx',CharStandings),
