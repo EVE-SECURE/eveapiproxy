@@ -20,7 +20,8 @@ class APICallResult(db.Model):
 	apiCall = db.StringProperty(required=True)				# The API call -- for example, /eve/SkillTree.xml.aspx
 	h = db.StringProperty(required=True)					# A unique hash of the parameters used in the API call
 	epoch = db.DateTimeProperty(required=True)				# The date and time the API call was made
-	value = db.TextProperty()								# The API call response
+	#value = db.TextProperty()								# The API call response
+	value = db.BlobProperty()								# The API call response
 
 class Proxy(webapp.RequestHandler):
 	APIROOT = 'http://api.eve-online.com'					# CCP's API call address
@@ -52,8 +53,9 @@ class Proxy(webapp.RequestHandler):
 		url = self.APIROOT+self.request.path + requestParameters						# Form the API call URL
 		value = urlfetch.fetch(url)							# Execute the API call
 		apiCallResult = APICallResult(apiCall=self.request.path,h=h,epoch=epoch)		# Create a new cache item
-		p = re.compile("'")									# Regular expression to clean up some characters XML doesn't like
-		apiCallResult.value = db.Text(p.sub("'",value.content))							# Set the response text
+		#p = re.compile("'")									# Regular expression to clean up some characters XML doesn't like
+		#apiCallResult.value = db.Text(p.sub("'",value.content))							# Set the response text
+		apiCallResult.value = value.content
 		apiCallResult.put()									# Do a GQL put
 		self.response.out.write(value.content)				# Write out the results
 		return												# Finished
